@@ -1,0 +1,12 @@
+LaTeX Warning: Citation `smith2020' on page 1 undefined on input line 12.
+Package natbib Warning: Citation `levy2021' on page 1 undefined on input line 5.
+Package natbib Warning: There were undefined citations.
+No file main.bbl.
+LaTeX Warning: Reference `fig1' on page 2 undefined on input line 30.
+Overfull \hbox (12.0pt too wide) in paragraph at lines 40--42
+Underfull \vbox (badness 10000) at lines 55--58
+! LaTeX Error: File `missing-package.sty' not found.
+l.5 \usepackage{missing-package}
+! Package amsmath Error: Unknown option `nointlimits'.
+! Undefined control sequence.
+l.42 \frobnicate

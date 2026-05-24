@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "paper-toolkit",
+  "description": "Self-published marketplace for the paper-toolkit plugin: deterministic CLI + companion skills (`agentsociety-analysis` and `agentsociety-generate-paper`) for evidence-backed academic paper drafting, checking, composition, and LaTeX compilation.",
+  "owner": {
+    "name": "fib-lab"
+  },
+  "plugins": [
+    {
+      "name": "paper-toolkit",
+      "description": "Deterministic CLI + companion Claude Code skills (`agentsociety-analysis` and `agentsociety-generate-paper`) for evidence-backed academic paper drafting, checking, composition, and LaTeX compilation. No LLM calls inside the toolkit; writing and review judgment remain in the agent session.",
+      "source": {
+        "source": "github",
+        "repo": "Yokumii/paper-toolkit"
+      },
+      "category": "research",
+      "tags": ["paper", "latex", "evidence-graph", "agentsociety"]
+    }
+  ]
+}

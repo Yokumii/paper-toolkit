@@ -1,0 +1,1 @@
+"""Deterministic manuscript checkers."""

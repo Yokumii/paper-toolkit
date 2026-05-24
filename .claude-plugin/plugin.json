@@ -1,0 +1,24 @@
+{
+  "name": "paper-toolkit",
+  "version": "0.1.0",
+  "description": "Deterministic paper writing, checking, composition, and compile tooling with companion `agentsociety-analysis` and `agentsociety-generate-paper` skills.",
+  "author": {
+    "name": "AgentSociety"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["paper", "latex", "research", "agent"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Paper Toolkit",
+    "shortDescription": "Write, check, compose, and compile evidence-backed papers.",
+    "longDescription": "Deterministic academic-paper tooling with companion `agentsociety-analysis` and `agentsociety-generate-paper` Claude Code skills. The toolkit provides CLI commands for templates, evidence graphs, checks, LaTeX composition, compilation, page inspection, figure rendering, literature search, refs dedup, and the analysis pipeline (`paper analysis`), while keeping writing and review judgment in the agent session.",
+    "developerName": "AgentSociety",
+    "category": "Research",
+    "capabilities": ["Write", "Research"],
+    "defaultPrompt": [
+      "Use paper-toolkit to draft an evidence-backed paper section.",
+      "Run paper checks and revise the manuscript.",
+      "Compile and inspect the current paper workspace."
+    ]
+  }
+}

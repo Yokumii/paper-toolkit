@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "nodes": [
+    {
+      "id": "c1",
+      "kind": "claim",
+      "label": "Heterogeneity improves adaptation.",
+      "body": null,
+      "section": "results",
+      "strength": "primary",
+      "source": null,
+      "cite_key": null
+    },
+    {
+      "id": "e1",
+      "kind": "evidence",
+      "label": "Adaptation figure.",
+      "body": null,
+      "section": null,
+      "strength": null,
+      "source": {
+        "kind": "figure",
+        "ref": "fig1",
+        "detail": "delta=0.08"
+      },
+      "cite_key": null
+    }
+  ],
+  "edges": [
+    {
+      "src": "e1",
+      "dst": "c1",
+      "kind": "supports"
+    }
+  ]
+}

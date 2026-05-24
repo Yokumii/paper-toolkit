@@ -1,0 +1,1 @@
+"""Bundled paper section templates."""

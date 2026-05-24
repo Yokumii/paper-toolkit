@@ -1,0 +1,46 @@
+name: nature
+sections:
+  - { name: abstract, word_range: [150, 200] }
+  - { name: intro, word_range: [400, 800] }
+  - { name: results, word_range: [1200, 2500] }
+  - { name: discussion, word_range: [600, 1200] }
+  - { name: methods, word_range: [800, 2000] }
+figure_constraints:
+  caption_words: [25, 200]
+  max_figures: 6
+citation_style: nature
+templates_dir: nature
+style_rules:
+  banned_punct:
+    - { pattern: "---", reason: "Use commas, semicolons, or sentence breaks instead of em-dash markup." }
+  banned_phrases:
+    - { pattern: "replac(e|es|ing) (the )?researcher", reason: "Frame the system as assisting researchers." }
+    - { pattern: "(in this paper,? we propose)", reason: "Use a stronger opening than this stock phrase." }
+    # AI-tone heuristics (warning-level — review per use; override in paper/venue.yaml if needed).
+    - { pattern: "delve",              severity: warning, reason: "Vague AI-tone verb; use examine/study/investigate." }
+    - { pattern: "leverage",           severity: warning, reason: "Vague AI-tone verb; use use/apply/exploit." }
+    - { pattern: "utilize",            severity: warning, reason: "Vague AI-tone verb; use 'use'." }
+    - { pattern: "facilitate",         severity: warning, reason: "Vague AI-tone verb; use enable/allow/support." }
+    - { pattern: "elucidate",          severity: warning, reason: "Vague AI-tone verb; use clarify/explain/show." }
+    - { pattern: "endeavor",           severity: warning, reason: "Vague AI-tone verb; use effort/attempt/work." }
+    - { pattern: "groundbreaking",     severity: warning, reason: "Hyperbolic framing; state the concrete contribution." }
+    - { pattern: "revolutionize",      severity: warning, reason: "Hyperbolic framing; describe what the work does." }
+    - { pattern: "paradigm shift",     severity: warning, reason: "Hyperbolic framing; describe the actual change." }
+    - { pattern: "game-changer",       severity: warning, reason: "Hyperbolic framing; describe what changed." }
+    - { pattern: "spearhead",          severity: warning, reason: "Promotional framing; describe the work neutrally." }
+    - { pattern: "at the forefront",   severity: warning, reason: "Promotional framing; state contribution instead." }
+    - { pattern: "rapidly evolving",   severity: warning, reason: "Filler claim; cite specific developments instead." }
+    - { pattern: "plays a crucial role", severity: warning, reason: "Filler claim; state the specific mechanism." }
+    - { pattern: "are poised to",      severity: warning, reason: "Speculative framing; state evidence instead." }
+    - { pattern: "it is worth noting", severity: warning, reason: "Filler phrase; just state the point." }
+    - { pattern: "first and foremost", severity: warning, reason: "Filler phrase; cut or rewrite directly." }
+    - { pattern: "aforementioned",     severity: warning, reason: "Filler phrase; rewrite to refer specifically." }
+    - { pattern: "in the realm of",    severity: warning, reason: "AI-style cliché; use 'in <field>'." }
+    - { pattern: "a myriad of",        severity: warning, reason: "AI-style cliché; use 'many' or be specific." }
+    - { pattern: "a testament to",     severity: warning, reason: "AI-style cliché; state what it shows directly." }
+    - { pattern: "holistic approach",  severity: warning, reason: "AI-style cliché; describe the approach." }
+    - { pattern: "multifaceted",       severity: warning, reason: "AI-style cliché; enumerate the facets." }
+    - { pattern: "tapestry",           severity: warning, reason: "AI-style metaphor; use concrete language." }
+    - { pattern: "synergy",            severity: warning, reason: "AI-style buzzword; describe the interaction." }
+    - { pattern: "underscores",        severity: warning, reason: "AI-style verb; use shows/demonstrates/indicates." }
+  preferred_phrases: []

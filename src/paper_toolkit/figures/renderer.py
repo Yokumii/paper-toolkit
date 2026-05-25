@@ -14,6 +14,7 @@ from paper_toolkit.figures.charts import (
 from paper_toolkit.figures.data_loader import load_data
 from paper_toolkit.figures.layout import apply_axes_layout
 from paper_toolkit.figures.palettes import resolve_palette
+from paper_toolkit.figures.script_backend import run_script_backend
 from paper_toolkit.figures.style import apply_publication_style
 from paper_toolkit.figures.tex_wrapper import wrap_figure_tex
 from paper_toolkit.io import write_atomic_text
@@ -24,6 +25,7 @@ from paper_toolkit.models.figure_spec import (
     ForestFigureSpec,
     LineFigureSpec,
     ScatterFigureSpec,
+    ScriptFigureSpec,
 )
 from paper_toolkit.paths import WorkspacePaths
 
@@ -134,3 +136,27 @@ def render_figure(*, spec: FigureSpec, workspace: Path, spec_dir: Path) -> Rende
     tex_path = (paths.figures_dir / f"{spec.id}.tex").resolve()
     write_atomic_text(tex_path, wrapper)
     return RenderResult(figure_id=spec.id, pdf_path=pdf_path, tex_path=tex_path)
+
+
+def render_script_figure(
+    *, spec: ScriptFigureSpec, workspace: Path, spec_dir: Path
+) -> RenderResult:
+    """Render a script-backed figure and emit the standard wrapper."""
+
+    script_path = (spec_dir / spec.entrypoint).resolve()
+    result = run_script_backend(
+        script_path=script_path,
+        backend=spec.backend,
+        workspace=workspace,
+        figure_id=spec.id,
+    )
+
+    wrapper = wrap_figure_tex(
+        figure_id=spec.id,
+        caption=spec.caption,
+        label=spec.resolved_label(),
+        width=spec.width,
+    )
+    tex_path = (WorkspacePaths(workspace=workspace).figures_dir / f"{spec.id}.tex").resolve()
+    write_atomic_text(tex_path, wrapper)
+    return RenderResult(figure_id=spec.id, pdf_path=result["pdf_path"].resolve(), tex_path=tex_path)

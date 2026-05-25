@@ -19,6 +19,7 @@ PaletteName = Literal["nmi_pastel", "nature_imaging", "nature_material", "nature
 Width = Literal["single", "double"]
 LegendPosition = Literal["inside", "right", "bottom", "none"]
 YLimMode = Literal["auto", "zero", "tight"]
+ScriptBackend = Literal["python", "r"]
 
 # Row shape produced by the data loader: dict with str keys + scalar values.
 RowValue = str | int | float | None
@@ -127,8 +128,20 @@ class CompositeFigureSpec(_FigureBase):
     data: DataPathOrInline = Field(default_factory=list)
 
 
+class ScriptFigureSpec(_FigureBase):
+    kind: Literal["script"] = "script"
+    backend: ScriptBackend
+    entrypoint: str
+    data: DataPathOrInline = Field(default_factory=list)
+
+
 FigureSpec = Annotated[
-    BarFigureSpec | LineFigureSpec | ScatterFigureSpec | ForestFigureSpec | CompositeFigureSpec,
+    BarFigureSpec
+    | LineFigureSpec
+    | ScatterFigureSpec
+    | ForestFigureSpec
+    | CompositeFigureSpec
+    | ScriptFigureSpec,
     Field(discriminator="kind"),
 ]
 

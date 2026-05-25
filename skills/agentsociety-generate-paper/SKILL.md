@@ -51,21 +51,33 @@ from this index.
 The Red Flags section below lists the "I don't need to read it" thoughts
 that mean you do.
 
+**Pre-reads apply mid-flow, not just at skill trigger time.** When you
+transition from drafting to review, or from one section to another, the
+Read tool must touch the relevant prompt and references again — your
+context drifts and the prompts encode the discipline the next step needs.
+
 ## Execution Modes
 
 Two modes; the controller picks per task.
 
-**Direct mode** (default for small tasks): the controller CC reads the
-discipline prompts and drives the toolkit itself. Cheapest, least
-ceremony. Right for single-section edits and small revision rounds.
+**Direct mode** (single-edit only): the controller CC reads the
+discipline prompts and drives the toolkit itself. ONLY appropriate for
+a single-section copyedit or a deterministic-checker fix-up. NOT
+appropriate for drafting new sections, running skeptical review, or
+making revision decisions.
 
-**Subagent-driven mode** (recommended for full-paper runs and multi-
-section drafting): the controller dispatches fresh subagents per role
-(drafter, spec-reviewer, skeptical-reviewer, revision-decider) so each
-role has isolated context. Right for ≥3 sections or any review round
-where role separation matters. See `prompts/_subagent_workflow.md` for
-the full role contracts, payload templates, parallelization rules, and
-status handling.
+**Subagent-driven mode** (REQUIRED for drafting and review): the
+controller dispatches fresh subagents per role (drafter, spec-reviewer,
+skeptical-reviewer, revision-decider). The skeptical-reviewer and
+revision-decider in particular MUST be subagents — running them in the
+same session that drafted the prose is a self-review and counts as
+skipping the review pass.
+
+When dispatching, the controller's prompt to the subagent MUST include
+the relevant `prompts/*.md` + `references/*.md` paths as an explicit
+"Required reads" block. Subagent sessions start with empty context and
+will not find them otherwise. See `prompts/_subagent_workflow.md` for
+payload templates.
 
 Iron Law of mode selection: do not switch modes mid-loop. If you started
 a section's draft → review → revise cycle in subagent-driven mode,
@@ -128,6 +140,8 @@ Map deterministic findings into the rubric using `references/review_rubric.md`
 | "The verb ladder is in my head; I don't need `_writing_shared.md`." | The ladder evolves with the venue config. Read the file each session. |
 | "The review found one major issue; I'll batch the fix with three minor ones." | `paper/reviews/revision-r<N>.md` must record each fix separately for auditability. Batching is the enemy of monotonic progress. |
 | "Citations are unused; I'll delete them from refs.bib." | An unused citation may belong to a deferred claim. Decide first, prune second; ask the researcher if unsure. |
+| "I drafted this section, so I can also review it; I'll save a subagent dispatch." | Self-review is not review. Skeptical reviewer and revision decider MUST be dispatched as subagents distinct from the drafter — see `prompts/_subagent_workflow.md`. |
+| "I read the prompt at the start of the skill; I don't need to re-Read it before review." | Each stage has its own pre-reads. Read them again when you move between drafting and review — context drift is real. |
 
 ## Red Flags (STOP if you catch yourself thinking)
 

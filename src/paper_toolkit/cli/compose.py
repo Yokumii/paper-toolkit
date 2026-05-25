@@ -83,6 +83,49 @@ def pack_figures_cmd(*, workspace: Path) -> Envelope:
         state = read_state(workspace=workspace)
     except WorkspaceNotInitialized:
         return _missing_workspace_envelope(workspace=workspace, action="compose.pack-figures")
+
+    paths = WorkspacePaths(workspace=workspace)
+    paths.figures_dir.mkdir(parents=True, exist_ok=True)
+
+    if state.artifacts.figures:
+        missing: list[str] = []
+        kept: list[FigureArtifact] = []
+        for fig in state.artifacts.figures:
+            packed_abs = (paths.workspace / fig.packed).resolve()
+            if not packed_abs.is_file():
+                missing.append(fig.id)
+                continue
+            kept.append(fig)
+        if missing:
+            summary = compute_state_summary(workspace=workspace, state=state)
+            return build_envelope(
+                action="compose.pack-figures",
+                result={"packed_figure_count": len(kept)},
+                state_summary=summary,
+                errors=[
+                    ErrorEntry(
+                        code="FIGURE_PACKED_MISSING",
+                        message=(
+                            f"registered figure '{fid}' has no packed PDF "
+                            f"at paper/figures/{fid}.pdf"
+                        ),
+                        fixup_hint=f"Run: paper figure render --spec paper/figure_specs/{fid}.json",
+                    )
+                    for fid in missing
+                ],
+            )
+        state.artifacts.figures = _populate_referenced_by(workspace=workspace, figures=kept)
+        write_state(workspace=workspace, state=state)
+        summary = compute_state_summary(workspace=workspace, state=state)
+        return build_envelope(
+            action="compose.pack-figures",
+            result={
+                "packed_figure_count": len(state.artifacts.figures),
+                "referenced_by": {fig.id: fig.referenced_by for fig in state.artifacts.figures},
+            },
+            state_summary=summary,
+        )
+
     graph = graph_state.load_or_empty(workspace=workspace)
     figure_nodes = [
         node

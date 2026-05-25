@@ -21,7 +21,7 @@ def test_plugin_manifest_valid_minimal_shape() -> None:
     data = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
 
     assert data["name"] == "paper-toolkit"
-    assert data["version"] == "0.1.0"
+    assert data["version"] == "0.1.2"
     assert data["skills"] == "./skills/"
     assert data["author"]["name"] == "AgentSociety"
     assert data["interface"]["displayName"] == "Paper Toolkit"

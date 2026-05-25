@@ -52,6 +52,9 @@ class VenueConfig(BaseModel):
     citation_style: str = "nature"
     templates_dir: str = "nature"
     style_rules: StyleRules = Field(default_factory=StyleRules)
+    # `extends:` is accepted for documentation purposes only — paper/venue.yaml is
+    # always merged on top of the built-in nature defaults, so the value is unused.
+    extends: str | None = None
 
     @property
     def section_names(self) -> list[str]:
@@ -95,5 +98,9 @@ def load_venue(*, workspace: Path, venue_name: str) -> VenueConfig:
         data = _merge_dict(_builtin_venue_data(), _read_yaml(paths.venue_yaml))
         return VenueConfig.model_validate(data)
     if venue_name != "nature":
-        raise ValueError(f"unsupported built-in venue {venue_name!r}; add paper/venue.yaml")
+        raise ValueError(
+            f"unknown venue {venue_name!r}: no paper/venue.yaml found and the only built-in "
+            "venue is 'nature'. Create paper/venue.yaml (it will be merged on top of the "
+            "built-in nature defaults — list only the keys you want to override)."
+        )
     return VenueConfig.model_validate(_builtin_venue_data())

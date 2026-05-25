@@ -5,13 +5,14 @@ You are drafting `analysis/<H>/<E>/report_zh.md` and
 narrows the requirement). The reports are written FROM `claims.json` +
 EDA artifacts + `report_context.md`, not from general knowledge.
 
-## Pre-reads (required)
+## Pre-reads (REQUIRED — call Read on each before drafting)
 
-- `prompts/_writing_shared.md`
-- `references/handoff_to_paper.md` — what the agentsociety-generate-paper skill expects to
-  consume.
-- `analysis/<H>/<E>/report_context.md` — built by
-  `paper analysis build-report-context`. Run it first.
+- `skills/agentsociety-analysis/prompts/_writing_shared.md`
+- `skills/agentsociety-analysis/references/handoff_to_paper.md` — what the agentsociety-generate-paper skill expects to consume.
+- `analysis/<H>/<E>/report_context.md` — built by `paper analysis build-report-context`. Run it first.
+
+The Read tool must touch each of these in *this* stage, not just at
+skill trigger time. Context drifts between stages.
 
 ## What to do
 
@@ -48,17 +49,31 @@ EDA artifacts + `report_context.md`, not from general knowledge.
    could not reach. Anything a future replication should test.
    ```
 
-4. Save both languages.
+4. Save both languages. **Each language report must be drafted by its
+   own `report-producer` subagent dispatch** — do not draft both
+   yourself in the controller session. The dispatch payload's required-
+   reads block MUST list:
+   - `skills/agentsociety-analysis/subagent_prompts/report-producer.md`
+   - `skills/agentsociety-analysis/prompts/_writing_shared.md`
+   - `skills/agentsociety-analysis/references/handoff_to_paper.md`
+   - `analysis/<H>/<E>/report_context.md`
+   - `analysis/<H>/<E>/claims.json`
 
 5. `paper analysis check-release --hypothesis-id H --experiment-id E
    --workspace .` — passes only when required-language files exist and
    are non-empty.
 
-6. **Dispatch the report-reviewer subagent** (see
-   `subagent_prompts/report-reviewer.md`). The reviewer reads
-   `claims.json`, EDA artifacts, AND the report; flags any sentence
-   not earned by the artifacts. Revise. Repeat until the verdict is
-   PASS.
+6. **Dispatch the report-reviewer subagent — MANDATORY.** Required-reads
+   block in the dispatch prompt:
+   - `skills/agentsociety-analysis/subagent_prompts/report-reviewer.md`
+   - `skills/agentsociety-analysis/references/analysis_quality.md`
+   - `analysis/<H>/<E>/claims.json`
+   - `analysis/<H>/<E>/report_zh.md` and/or `report_en.md`
+   - `analysis/<H>/<E>/evidence_index.json`
+
+   The reviewer flags any sentence not earned by the artifacts. Revise
+   via another `report-producer` dispatch. Repeat until verdict is
+   `PASS`. Do NOT review the report yourself in the controller session.
 
 ## Quality bar
 

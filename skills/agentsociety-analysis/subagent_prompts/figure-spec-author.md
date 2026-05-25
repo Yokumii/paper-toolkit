@@ -25,17 +25,27 @@ subagent must clear the spec first.
 
 1. Read the supporting slug to understand the rows / columns you have
    to work with.
-2. Pick the chart kind using `chart_qa.md`'s chooser. If two kinds
+2. Write a short figure contract in working notes: core conclusion,
+   archetype, hero evidence, supporting evidence, panel map, and the
+   reviewer-risk notes on statistics / source data / image integrity.
+3. Pick the chart kind using `chart_qa.md`'s chooser. If two kinds
    would both work, prefer the one with the stronger encoding (see the
    ladder).
-3. Choose the palette honestly. Default `nmi_pastel`. Use
+   For comparative claims, shape the data so both sides of the
+   comparison are visible in the same chart. Pull rows from sibling
+   experiments when needed; do not emit a single-experiment summary and
+   leave the comparison to the caption.
+4. Choose the palette honestly. Default `nmi_pastel`. Use
    `nature_clinical` only when there is a literal treatment-vs-control
    semantic. Never invent a fifth palette.
-4. Choose `width`: `single` (89 mm) for most charts; `double` only when
+5. Choose `width`: `single` (89 mm) for most charts; `double` only when
    the chart genuinely needs it (rare for one-claim charts).
-5. Author the spec at `paper/figure_specs/<figure_id>.json` with inline
+6. Author the spec at `paper/figure_specs/<figure_id>.json` with inline
    `data` (≤50 rows) or `data` pointing at a CSV under the spec dir.
-6. Set `caption` to ONE sentence (the figure-reviewer will catch
+   Use `script` when the claim needs an asymmetric mixed-modality
+   layout, dark image plate, dedicated legend axis, or another
+   hero-panel structure the built-in chart kinds cannot express.
+7. Set `caption` to ONE sentence (the figure-reviewer will catch
    multi-sentence captions).
 
 ## Required outputs

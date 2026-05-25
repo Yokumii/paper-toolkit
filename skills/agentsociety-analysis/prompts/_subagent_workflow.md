@@ -1,13 +1,14 @@
 # Subagent workflow — when to delegate
 
-Single-agent execution is fine for one-experiment, one-hypothesis runs.
-Subagent-driven mode is required when ANY of these apply:
+Subagent dispatch is REQUIRED at the stages that need role separation
+(stage 4 figure-reviewer, stage 5 report-reviewer, stage 6 synthesis-
+reviewer). It is also strongly recommended for parallelizable producers
+(bilingual report drafting, multi-experiment synthesis).
 
-- Three or more experiments under the same hypothesis.
-- Multiple producers needed in parallel (e.g., bilingual reports + a
-  separate synthesis brief).
-- A review pass would benefit from role isolation (producer can't see
-  reviewer's running context).
+The controller may run the deterministic CLI verbs itself, but it must
+NOT play producer and reviewer in the same session for any of the
+review-gated stages. Self-review is the dominant failure mode this
+workflow exists to prevent.
 
 ## Roles
 
@@ -24,15 +25,19 @@ Subagent-driven mode is required when ANY of these apply:
 
 ## Iron rules
 
-1. **Producer + reviewer must be distinct subagents** at stage 5 and
-   stage 6. The controller must NOT review its own producer's output.
+1. **Producer + reviewer must be distinct subagents** at stages 4, 5, 6
+   (figure-reviewer before render, report-reviewer over each produced
+   report, synthesis-reviewer over the brief). The controller running
+   the producer and then "reviewing" the result in the same session is
+   a self-review and counts as skipping the gate.
 2. **Figure reviewer runs BEFORE render.** Rendering the PDF first
    wastes the audit trail; the reviewer's verdict belongs in the spec
    review record, not in a "we already rendered, now what" loop.
-3. **Subagent prompts open with the relevant references.** Each
-   subagent_prompts/*.md file points at the references the role needs.
-   The controller must NOT paste reference content into the dispatch
-   payload; the subagent reads it itself.
+3. **The controller MUST list the subagent's required reads in the
+   dispatch prompt.** Subagent sessions start with empty context;
+   without the explicit list they will not Read the references and
+   will fall back to generic intuition. Use the dispatch payload
+   shape below — there are no exceptions.
 4. **Do not switch modes mid-loop.** If you started a section's
    producer-reviewer cycle in subagent-driven mode, finish it that way.
    Falling back to "I'll just fix it directly" loses the audit trail.
@@ -44,10 +49,37 @@ Always pass these to a subagent:
 - `hypothesis_id`, `experiment_id` (when scoped to one experiment).
 - The relevant artifact paths (e.g., `paper/figure_specs/<id>.json` for
   the figure reviewer).
-- The required references the subagent must Read first.
+- **An explicit "Required reads" block listing every `references/*.md`
+  and `prompts/*.md` the subagent must Read first.** Paths only, not
+  content — the subagent calls Read itself. Without this block, the
+  subagent will not find the references; it does not inherit the
+  controller's context.
 - The single expected output artifact path (e.g., `paper/reviews/...`,
   `analysis/<H>/<E>/report_<lang>.md`).
 - Termination condition (what "done" looks like, in one sentence).
+
+### Template
+
+```
+Role: <figure-reviewer | report-producer | ...>
+
+Required reads (call Read on each before producing output):
+- skills/agentsociety-analysis/subagent_prompts/<role>.md
+- skills/agentsociety-analysis/references/<doc>.md
+- skills/agentsociety-analysis/references/<doc2>.md
+- <relevant artifact paths, e.g. paper/figure_specs/fig_x.json>
+
+Inputs:
+- workspace = ...
+- hypothesis_id = ..., experiment_id = ...
+- <other scoped IDs>
+
+Expected output:
+- <artifact path or structured verdict>
+
+Done when:
+- <one-sentence termination criterion>
+```
 
 Never pass:
 - The controller's running notes / context.

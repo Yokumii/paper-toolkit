@@ -73,15 +73,31 @@ def run(*, workspace: Path, title: str, venue: str, language: str) -> Envelope:
             ],
         )
 
+    scaffolded_venue_yaml = False
+    if venue != "nature" and not paths.venue_yaml.exists():
+        paths.venue_yaml.parent.mkdir(parents=True, exist_ok=True)
+        paths.venue_yaml.write_text(
+            f"""# paper/venue.yaml — overrides for venue {venue!r}.
+# This file is auto-merged on top of the built-in `nature` defaults; list only
+# the keys you want to override. Delete this file to fall back to plain nature.
+name: {venue}
+""",
+            encoding="utf-8",
+        )
+        scaffolded_venue_yaml = True
+
     state = read_state(workspace=workspace)
     summary = compute_state_summary(workspace=workspace, state=state)
+    result: dict[str, object] = {
+        "paper_state_path": str(paths.paper_state),
+        "title": state.meta.title,
+        "venue": state.meta.venue,
+        "language": state.meta.language,
+    }
+    if scaffolded_venue_yaml:
+        result["scaffolded_venue_yaml"] = str(paths.venue_yaml)
     return build_envelope(
         action="init",
-        result={
-            "paper_state_path": str(paths.paper_state),
-            "title": state.meta.title,
-            "venue": state.meta.venue,
-            "language": state.meta.language,
-        },
+        result=result,
         state_summary=summary,
     )

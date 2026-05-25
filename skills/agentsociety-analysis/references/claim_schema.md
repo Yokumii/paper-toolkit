@@ -36,6 +36,10 @@ seems ambiguous.
   - `comparative` — A vs B with a directional verdict.
   - `qualitative` — supported by a narrative pattern in a sampled record
     set (use sparingly; require concrete row references in `evidence`).
+- `comparative` claims often need figure data drawn from more than the
+  current experiment's local summary. If the verdict is treatment vs
+  control, pro- vs counter-attitudinal, or any other A vs B contrast,
+  the figure should usually show both sides on the same axes.
 - `evidence` — the slug of the supporting profile or query, e.g.
   `agent_status_profile` or `tick_avg_x_by_arm`. Must point at an
   existing artifact under `eda/`; if it doesn't, the claim is not

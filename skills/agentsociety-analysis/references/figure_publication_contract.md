@@ -18,9 +18,8 @@ floor. Specifically it applies these in
 "legend.frameon": False,
 ```
 
-You do not set these yourself in a custom matplotlib script — there is no
-custom matplotlib script. You author a FigureSpec; the renderer applies
-the preset.
+Structured figures inherit these automatically. Script-backed figures
+must emit outputs that satisfy the same contract.
 
 ## Column widths
 
@@ -58,9 +57,12 @@ those two together.
 | `scatter` | the relationship between two variables across N observations | `x_field`, `y_field` (+ `series_field`, `size_field` optional) |
 | `forest` | effect sizes with confidence intervals across studies / arms | `label_field`, `estimate_field`, `ci_low_field`, `ci_high_field` |
 
-Heatmap, network, radar, GridSpec multi-panel are NOT in scope for v1.
-If your claim needs them, restructure the claim or add the chart in a
-follow-up version.
+`composite` supports quantitative multi-panel layouts that can be
+expressed with the built-in chart kinds. `script` exists for layouts
+that need asymmetric hero panels, dedicated legend axes, dark image
+plates, or chart families outside the built-in set. If a script-backed
+figure is used, the selected backend must still emit `<id>.pdf` and
+`<id>.svg` under `paper/figures/`.
 
 ## Editable text + embedded fonts
 
@@ -72,10 +74,19 @@ follow-up version.
   one of `Arial / Helvetica / DejaVu / Liberation`, and the PDF width
   matches the column target. Fix what it flags; do not silence it.
 
+## Panel hierarchy + label policy
+
+- Multi-panel figures should visibly rank evidence: one hero panel or
+  hero row, then supporting panels.
+- Panel labels stay lowercase, bold, and near the top-left of each
+  panel unless a dark image plate requires an inside-white variant.
+- Prefer direct labels or one shared legend area over repeating the same
+  legend in every panel.
+
 ## What you must NEVER do
 
-1. Author a matplotlib script of your own. The renderer is the audit
-   surface.
+1. Emit only a PDF. Every rendered figure needs the editable SVG
+   companion with matching content.
 2. Use a fifth palette. Add one to the toolkit if you need it — do not
    pass a custom dict in the spec.
 3. Set `font.size` above 24 or below 5. The renderer's validator rejects

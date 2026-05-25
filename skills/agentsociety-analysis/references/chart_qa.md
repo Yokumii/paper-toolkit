@@ -32,6 +32,8 @@ one of them or sharpen the claim so a fit emerges.
 - Logarithmic axes used to hide variance rather than reveal it.
 - A `group_field` that produces 6+ bar groups packed together — split
   into panels (a future feature) or pick a different summary stat.
+- A comparative claim whose chart shows only one arm / condition and
+  pushes the actual comparison into the caption or prose.
 - "Mean ± SE" when the claim is about distribution shape — use a
   scatter / quantile representation, or sharpen the claim.
 - An error_field that doesn't exist in the data (the spec validator
@@ -47,5 +49,7 @@ PDF and confirm:
 2. The visible trend matches the claim's directional verb.
 3. The chart's strongest visual statement IS the claim — not a
    different, weaker, or stronger version.
+4. The PDF has no title clipping, tick-label overlap, or y-axis
+   truncation that changes the apparent effect size.
 
-If any of those three fails, return to spec authoring.
+If any of those checks fails, return to spec authoring.

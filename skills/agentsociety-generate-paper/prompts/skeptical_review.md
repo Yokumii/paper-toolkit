@@ -5,6 +5,15 @@ as a rigorous, evidence-oriented top-journal reviewer would. This prompt is
 part of the paper-toolkit skill; deterministic findings come from the
 toolkit CLI and are the *floor* of the review.
 
+## Run this as a subagent — not in the drafting session
+
+The skeptical reviewer MUST be dispatched as a fresh subagent. If the
+controller already drafted the prose in its current session, it cannot
+also "skeptically review" the same prose — the reviewer needs a clean
+context to attack the work as an outsider would. Dispatch via the
+template in `prompts/_subagent_workflow.md`; include this file plus
+`references/review_rubric.md` in the subagent's required-reads block.
+
 ## The Iron Law (review)
 
 ```

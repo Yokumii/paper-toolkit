@@ -54,6 +54,10 @@ spec JSON.
    combine rows from sibling experiments when the comparison itself is
    the claim.
 
+   Use the structured spec path for common single-chart and composite
+   figures. Use a script-backed figure when the claim needs a layout or
+   modality the built-in chart kinds cannot express.
+
 3. **Dispatch the figure-reviewer subagent — MANDATORY, BEFORE render.**
    Use the dispatch payload shape from `prompts/_subagent_workflow.md`.
    The required-reads block in the dispatch prompt MUST list:

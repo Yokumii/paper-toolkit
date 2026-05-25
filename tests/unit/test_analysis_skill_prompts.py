@@ -33,3 +33,9 @@ def test_figure_reviewer_requires_post_render_pdf_audit() -> None:
 def test_analysis_quality_refine_section_requires_comparator_visible_in_chart() -> None:
     text = _read("references", "analysis_quality.md")
     assert "comparative claim's chart includes every compared arm / condition needed to see the verdict" in text
+
+
+def test_analysis_prompts_explain_when_to_use_structured_vs_script_figures() -> None:
+    text = _read("prompts", "figure_emission.md")
+    assert "use the structured spec path for common single-chart and composite figures" in text
+    assert "use a script-backed figure when the claim needs a layout or modality the built-in chart kinds cannot express" in text

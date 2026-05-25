@@ -11,8 +11,8 @@ from pydantic import TypeAdapter, ValidationError
 from paper_toolkit.envelope import Envelope, ErrorEntry, StateSummary, build_envelope
 from paper_toolkit.figures.data_loader import FigureDataMalformed, FigureDataNotFound
 from paper_toolkit.figures.palettes import list_palette_names
-from paper_toolkit.figures.renderer import RenderResult, render_figure
-from paper_toolkit.models.figure_spec import FigureSpec
+from paper_toolkit.figures.renderer import RenderResult, render_figure, render_script_figure
+from paper_toolkit.models.figure_spec import FigureSpec, ScriptFigureSpec
 from paper_toolkit.models.paper_state import FigureArtifact
 from paper_toolkit.paths import WorkspacePaths
 from paper_toolkit.state.workspace import (
@@ -116,7 +116,10 @@ def render_cmd(*, workspace: Path, spec_path: Path) -> Envelope:
         )
 
     try:
-        result = render_figure(spec=spec, workspace=workspace, spec_dir=spec_path.parent)
+        if isinstance(spec, ScriptFigureSpec):
+            result = render_script_figure(spec=spec, workspace=workspace, spec_dir=spec_path.parent)
+        else:
+            result = render_figure(spec=spec, workspace=workspace, spec_dir=spec_path.parent)
     except FigureDataNotFound as exc:
         return build_envelope(
             action="figure.render",

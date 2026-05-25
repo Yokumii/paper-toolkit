@@ -129,3 +129,52 @@ def test_render_all_iterates_spec_dir(tmp_path: Path) -> None:
     payload = json.loads(result.stdout)
     ids = sorted(entry["figure_id"] for entry in payload["result"]["rendered"])
     assert ids == ["a_fig", "b_fig"]
+
+
+def test_render_script_spec_happy_path(tmp_path: Path) -> None:
+    _init_workspace(tmp_path)
+    spec_dir = tmp_path / "paper" / "figure_specs"
+    (spec_dir / "emit_script.py").write_text(
+        """
+from pathlib import Path
+import sys
+
+import matplotlib.pyplot as plt
+
+
+def main(out_dir: str) -> None:
+    out = Path(out_dir)
+    fig, ax = plt.subplots()
+    ax.plot([1, 2], [3, 4])
+    fig.savefig(out / "fig_script.pdf")
+    fig.savefig(out / "fig_script.svg")
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])
+""".strip(),
+        encoding="utf-8",
+    )
+    spec_path = spec_dir / "fig_script.json"
+    spec_path.write_text(
+        json.dumps(
+            {
+                "kind": "script",
+                "id": "fig_script",
+                "caption": "Scripted figure",
+                "backend": "python",
+                "entrypoint": "emit_script.py",
+                "data": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    runner = CliRunner()
+    result = runner.invoke(
+        app,
+        ["figure", "render", "--spec", str(spec_path), "--workspace", str(tmp_path)],
+    )
+    assert result.exit_code == 0, result.stdout
+    payload = json.loads(result.stdout)
+    assert payload["result"]["figure_id"] == "fig_script"

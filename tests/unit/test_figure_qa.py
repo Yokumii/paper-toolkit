@@ -73,3 +73,10 @@ def test_check_figure_qa_flags_unreadable_pdf(tmp_path: Path) -> None:
     report = check_figure_qa(workspace=tmp_path)
     codes = [issue.code for issue in report.issues]
     assert "FQA_UNREADABLE_PDF" in codes
+
+
+def test_check_figure_qa_flags_missing_svg_companion(tmp_path: Path) -> None:
+    _seed_workspace_with_rendered_bar(tmp_path)
+    report = check_figure_qa(workspace=tmp_path)
+    codes = [issue.code for issue in report.issues]
+    assert "FQA_MISSING_SVG" in codes

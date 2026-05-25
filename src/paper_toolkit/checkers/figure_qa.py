@@ -164,6 +164,18 @@ def check_figure_qa(*, workspace: Path) -> CheckReport:
         figure_id = pdf_path.stem
         if not _FIGURE_ID_RE.match(figure_id):
             continue
+        svg_path = pdf_path.with_suffix(".svg")
+        location = f"paper/figures/{pdf_path.name}"
+        if not svg_path.exists():
+            issues.append(
+                issue(
+                    severity="warning",
+                    code="FQA_MISSING_SVG",
+                    message=f"{pdf_path.name}: editable SVG companion is missing.",
+                    location=location,
+                    fixup_hint="Re-render the figure so both PDF and SVG outputs are emitted.",
+                )
+            )
         try:
             reader = PdfReader(str(pdf_path))
         except Exception as exc:
@@ -172,15 +184,13 @@ def check_figure_qa(*, workspace: Path) -> CheckReport:
                     severity="error",
                     code="FQA_UNREADABLE_PDF",
                     message=f"could not read PDF {pdf_path.name}: {exc}",
-                    location=str(pdf_path),
+                    location=location,
                 )
             )
             continue
 
         width_mm = _pdf_width_mm(reader)
         font_records = _collect_font_records(reader)
-
-        location = f"paper/figures/{pdf_path.name}"
         if width_mm is None:
             issues.append(
                 issue(

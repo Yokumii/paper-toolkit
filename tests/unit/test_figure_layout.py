@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import pytest
-
-plt = pytest.importorskip("matplotlib.pyplot")
 
 from paper_toolkit.figures.layout import apply_axes_layout
 

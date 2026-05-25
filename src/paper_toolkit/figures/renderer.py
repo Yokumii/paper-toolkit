@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from paper_toolkit.figures.charts import (
     draw_bar,
@@ -45,7 +46,7 @@ def _figsize(width: str) -> tuple[float, float]:
     return _SINGLE_IN if width == "single" else _DOUBLE_IN
 
 
-def _draw_spec_axes(*, ax: object, spec: FigureSpec, workspace: Path, spec_dir: Path) -> None:
+def _draw_spec_axes(*, ax: Any, spec: FigureSpec, workspace: Path, spec_dir: Path) -> None:
     rows = load_data(data=spec.data, spec_dir=spec_dir, workspace=workspace)
     palette = resolve_palette(spec.palette)
 

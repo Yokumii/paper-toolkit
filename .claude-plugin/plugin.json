@@ -1,6 +1,6 @@
 {
   "name": "paper-toolkit",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Deterministic paper writing, checking, composition, and compile tooling with companion `agentsociety-analysis` and `agentsociety-generate-paper` skills.",
   "author": {
     "name": "AgentSociety"

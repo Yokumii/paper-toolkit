@@ -1,6 +1,6 @@
 [project]
 name = "paper-toolkit"
-version = "0.1.0"
+version = "0.1.2"
 description = "Deterministic Python tools for academic-paper development. No LLM calls."
 readme = "README.md"
 license = { file = "LICENSE" }

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
+from paper_toolkit.figures import renderer as renderer_mod
 from paper_toolkit.figures.renderer import render_figure
 from paper_toolkit.models.figure_spec import (
     BarFigureSpec,
@@ -133,3 +135,71 @@ def test_render_loads_csv_data_relative_to_spec_dir(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=specs_dir)
 
     assert result.pdf_path.is_file()
+
+
+def test_render_bar_with_wrapped_ticks_and_right_legend(tmp_path: Path) -> None:
+    _seed_workspace(tmp_path)
+    called: dict[str, Any] = {}
+
+    def _fake_apply_axes_layout(ax: Any, **kwargs: Any) -> None:
+        called["kwargs"] = kwargs
+
+    original = getattr(renderer_mod, "apply_axes_layout", None)
+    renderer_mod.apply_axes_layout = _fake_apply_axes_layout
+    spec = BarFigureSpec(
+        id="fig_wrapped",
+        caption="Wrapped labels",
+        data=[
+            {"metric": "Counter Attitudinal Exposure", "group": "Control", "y": 0.4},
+            {"metric": "Counter Attitudinal Exposure", "group": "Treatment", "y": 0.6},
+        ],
+        x_field="metric",
+        y_field="y",
+        group_field="group",
+        tick_label_rotation=30,
+        tick_label_wrap=12,
+        legend_position="right",
+    )
+
+    try:
+        result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
+    finally:
+        if original is None:
+            delattr(renderer_mod, "apply_axes_layout")
+        else:
+            renderer_mod.apply_axes_layout = original
+
+    assert result.pdf_path.is_file()
+    assert called["kwargs"]["tick_label_rotation"] == 30
+    assert called["kwargs"]["tick_label_wrap"] == 12
+    assert called["kwargs"]["legend_position"] == "right"
+
+
+def test_render_line_tight_ylim_does_not_raise(tmp_path: Path) -> None:
+    _seed_workspace(tmp_path)
+    called: dict[str, Any] = {}
+
+    def _fake_apply_axes_layout(ax: Any, **kwargs: Any) -> None:
+        called["kwargs"] = kwargs
+
+    original = getattr(renderer_mod, "apply_axes_layout", None)
+    renderer_mod.apply_axes_layout = _fake_apply_axes_layout
+    spec = LineFigureSpec(
+        id="fig_tight",
+        caption="Tight line",
+        data=[{"x": 1, "y": 10.0}, {"x": 2, "y": 10.2}, {"x": 3, "y": 10.3}],
+        x_field="x",
+        y_field="y",
+        ylim_mode="tight",
+    )
+
+    try:
+        result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
+    finally:
+        if original is None:
+            delattr(renderer_mod, "apply_axes_layout")
+        else:
+            renderer_mod.apply_axes_layout = original
+
+    assert result.pdf_path.is_file()
+    assert called["kwargs"]["ylim_mode"] == "tight"

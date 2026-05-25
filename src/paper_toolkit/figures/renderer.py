@@ -12,6 +12,7 @@ from paper_toolkit.figures.charts import (
     draw_scatter,
 )
 from paper_toolkit.figures.data_loader import load_data
+from paper_toolkit.figures.layout import apply_axes_layout
 from paper_toolkit.figures.palettes import resolve_palette
 from paper_toolkit.figures.style import apply_publication_style
 from paper_toolkit.figures.tex_wrapper import wrap_figure_tex
@@ -76,8 +77,16 @@ def render_figure(*, spec: FigureSpec, workspace: Path, spec_dir: Path) -> Rende
             ax.set_xlabel(spec.xlabel)
         if spec.ylabel:
             ax.set_ylabel(spec.ylabel)
-        if spec.title:
-            ax.set_title(spec.title)
+        apply_axes_layout(
+            ax,
+            tick_label_rotation=spec.tick_label_rotation,
+            tick_label_wrap=spec.tick_label_wrap,
+            title=spec.title,
+            title_wrap=spec.title_wrap,
+            legend_position=spec.legend_position,
+            ylim_mode=spec.ylim_mode,
+            ylim_padding_ratio=spec.ylim_padding_ratio,
+        )
         fig.tight_layout()
 
         pdf_path = (paths.figures_dir / f"{spec.id}.pdf").resolve()

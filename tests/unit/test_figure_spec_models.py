@@ -7,6 +7,7 @@ from pydantic import TypeAdapter, ValidationError
 
 from paper_toolkit.models.figure_spec import (
     BarFigureSpec,
+    CompositeFigureSpec,
     FigureSpec,
     ForestFigureSpec,
     LineFigureSpec,
@@ -136,3 +137,54 @@ def test_id_rejects_invalid_characters() -> None:
                 "y_field": "y",
             }
         )
+
+
+def test_bar_spec_accepts_tick_rotation_and_legend_position() -> None:
+    spec = _adapter().validate_python(
+        {
+            "kind": "bar",
+            "id": "fig_ticks",
+            "caption": "Demo",
+            "data": [{"arm": "Control", "y": 0.4}],
+            "x_field": "arm",
+            "y_field": "y",
+            "tick_label_rotation": 30,
+            "legend_position": "right",
+            "ylim_mode": "tight",
+        }
+    )
+    assert spec.tick_label_rotation == 30
+    assert spec.legend_position == "right"
+    assert spec.ylim_mode == "tight"
+
+
+def test_composite_spec_is_discriminated_and_validates_panels() -> None:
+    spec = _adapter().validate_python(
+        {
+            "kind": "composite",
+            "id": "fig_combo",
+            "caption": "Composite",
+            "width": "double",
+            "layout": {"rows": 2, "cols": 2},
+            "panels": [
+                {
+                    "panel_id": "a",
+                    "row": 0,
+                    "col": 0,
+                    "rowspan": 1,
+                    "colspan": 2,
+                    "figure": {
+                        "kind": "bar",
+                        "id": "fig_child",
+                        "caption": "Child",
+                        "data": [{"arm": "A", "y": 1.0}],
+                        "x_field": "arm",
+                        "y_field": "y",
+                    },
+                }
+            ],
+        }
+    )
+    assert isinstance(spec, CompositeFigureSpec)
+    assert spec.kind == "composite"
+    assert spec.panels[0].panel_id == "a"

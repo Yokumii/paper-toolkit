@@ -17,6 +17,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 PaletteName = Literal["nmi_pastel", "nature_imaging", "nature_material", "nature_clinical"]
 Width = Literal["single", "double"]
+LegendPosition = Literal["inside", "right", "bottom", "none"]
+YLimMode = Literal["auto", "zero", "tight"]
 
 # Row shape produced by the data loader: dict with str keys + scalar values.
 RowValue = str | int | float | None
@@ -36,6 +38,12 @@ class _FigureBase(BaseModel):
     palette: PaletteName = "nmi_pastel"
     width: Width = "single"
     font_size: int = Field(default=10, ge=5, le=24)
+    tick_label_rotation: int = Field(default=0, ge=0, le=90)
+    tick_label_wrap: int | None = Field(default=None, ge=4, le=40)
+    title_wrap: int | None = Field(default=None, ge=12, le=120)
+    legend_position: LegendPosition = "inside"
+    ylim_mode: YLimMode = "auto"
+    ylim_padding_ratio: float = Field(default=0.08, ge=0.0, le=0.5)
     xlabel: str | None = None
     ylabel: str | None = None
     title: str | None = None
@@ -91,7 +99,39 @@ class ForestFigureSpec(_FigureBase):
     )
 
 
+class PanelFigureSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    panel_id: str
+    row: int
+    col: int
+    rowspan: int = 1
+    colspan: int = 1
+    figure: FigureSpec
+
+
+class CompositeLayoutSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    rows: int = Field(..., ge=1, le=6)
+    cols: int = Field(..., ge=1, le=6)
+    height_ratios: list[float] | None = None
+    width_ratios: list[float] | None = None
+
+
+class CompositeFigureSpec(_FigureBase):
+    kind: Literal["composite"] = "composite"
+    layout: CompositeLayoutSpec
+    panels: list[PanelFigureSpec]
+    hero_panel: str | None = None
+    data: DataPathOrInline = Field(default_factory=list)
+
+
 FigureSpec = Annotated[
-    BarFigureSpec | LineFigureSpec | ScatterFigureSpec | ForestFigureSpec,
+    BarFigureSpec | LineFigureSpec | ScatterFigureSpec | ForestFigureSpec | CompositeFigureSpec,
     Field(discriminator="kind"),
 ]
+
+
+PanelFigureSpec.model_rebuild()
+CompositeFigureSpec.model_rebuild()

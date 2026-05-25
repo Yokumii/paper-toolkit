@@ -4,10 +4,12 @@ You are aggregating claims across multiple experiments of the same
 hypothesis into a single brief, lifting them into the paper's evidence
 graph, and (optionally for v1) authoring a cross-experiment narrative.
 
-## Pre-reads (required)
+## Pre-reads (REQUIRED — call Read on each before any synthesis tool call)
 
-- `references/workflow.md` — the synthesis gate definition.
-- `references/handoff_to_paper.md` — what the agentsociety-generate-paper skill consumes.
+- `skills/agentsociety-analysis/references/workflow.md` — the synthesis gate definition.
+- `skills/agentsociety-analysis/references/handoff_to_paper.md` — what the agentsociety-generate-paper skill consumes.
+
+These must be Read in *this* stage, not just at skill trigger time.
 
 ## What to do
 
@@ -45,7 +47,21 @@ graph, and (optionally for v1) authoring a cross-experiment narrative.
    `synthesis_report_en.md` under `analysis/synthesis/<H>/`. This is
    the cross-experiment narrative — what holds across the runs, what
    varies, what the next experiment should test. It is NOT a copy of
-   any individual report.
+   any individual report. **Each language must be drafted by its own
+   `synthesis-producer` subagent dispatch.**
+
+6. **Dispatch the synthesis-reviewer subagent — MANDATORY whenever a
+   synthesis report is authored.** Required-reads block:
+   - `skills/agentsociety-analysis/subagent_prompts/synthesis-reviewer.md`
+   - `skills/agentsociety-analysis/references/analysis_quality.md`
+   - `analysis/synthesis/<H>/synthesis_brief.json`
+   - `analysis/synthesis/<H>/synthesis_report_*.md`
+   - per-experiment `analysis/<H>/<E>/claims.json` for every E in scope
+
+   The reviewer compares the narrative against the brief's
+   `source_experiments` evidence; any cross-experiment generalization
+   not supported by ≥2 source experiments must be flagged. Do NOT
+   review the synthesis report yourself.
 
 ## Quality bar
 

@@ -5,12 +5,15 @@ claim, rendering it via `paper figure render`, registering it via
 `paper figure register`, and binding it to the claim via `paper
 analysis record-figure-contract`.
 
-## Pre-reads (required)
+## Pre-reads (REQUIRED — call Read on each before any tool call in this stage)
 
-- `references/figure_publication_contract.md` — the hard rules baked into
-  the renderer.
-- `references/figure_contract.md` — one chart per claim discipline.
-- `references/chart_qa.md` — chart-kind chooser + encoding ladder.
+- `skills/agentsociety-analysis/references/figure_publication_contract.md` — the hard rules baked into the renderer.
+- `skills/agentsociety-analysis/references/figure_contract.md` — one chart per claim discipline.
+- `skills/agentsociety-analysis/references/chart_qa.md` — chart-kind chooser + encoding ladder.
+
+If you cannot point at three fresh Read tool calls covering these
+files, you have NOT done the pre-reads. Do them before touching the
+spec JSON.
 
 ## What to do, per claim
 
@@ -45,9 +48,18 @@ analysis record-figure-contract`.
    Inline `data` is fine for ≤50 rows; for larger data, point `data` at
    a CSV path (resolved spec-dir → workspace).
 
-3. **Dispatch the figure-reviewer subagent**. The reviewer reads the
-   spec against `figure_publication_contract.md` and the claim against
-   `chart_qa.md`. Only render after the reviewer's verdict is PASS.
+3. **Dispatch the figure-reviewer subagent — MANDATORY, BEFORE render.**
+   Use the dispatch payload shape from `prompts/_subagent_workflow.md`.
+   The required-reads block in the dispatch prompt MUST list:
+   - `skills/agentsociety-analysis/subagent_prompts/figure-reviewer.md`
+   - `skills/agentsociety-analysis/references/figure_publication_contract.md`
+   - `skills/agentsociety-analysis/references/chart_qa.md`
+   - `skills/agentsociety-analysis/references/figure_contract.md`
+   - `paper/figure_specs/<figure_id>.json`
+   - the bound claim's record in `analysis/<H>/<E>/claims.json`
+
+   Only render after the reviewer's verdict is `PASS`. Do NOT review
+   the spec yourself "to save a round-trip" — that defeats the gate.
 
 4. `paper figure render --spec paper/figure_specs/<id>.json --workspace
    .` → produces `paper/figures/<id>.pdf` + wrapper `.tex`.

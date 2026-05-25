@@ -56,6 +56,34 @@ last_query_slug. Never invent fields; never edit it by hand.
 Each file is a *required* read for the task it owns. The Read tool must
 touch it; do not infer contents from this index.
 
+**This applies mid-flow, not just at trigger time.** When you transition
+from one stage to the next, re-Read the new stage's pre-reads even if you
+read them an hour ago. The prompts encode the discipline the next step
+needs; skimming from memory is how steps get skipped.
+
+## Subagent dispatch — required, not optional
+
+The Iron Law's *figure-reviewer* clause and the producer/reviewer split at
+stages 5/6 are NOT suggestions. The following steps MUST be dispatched as
+distinct subagents — running them in the controller session is a self-review
+and counts as skipping the gate:
+
+| Step | Producer subagent | Reviewer subagent |
+|---|---|---|
+| Stage 4 — figure spec authoring | `figure-spec-author` | `figure-reviewer` (BEFORE render) |
+| Stage 5 — bilingual report | `report-producer` (one per language) | `report-reviewer` |
+| Stage 6 — cross-experiment synthesis | `synthesis-producer` | `synthesis-reviewer` |
+
+When dispatching, the controller's prompt to the subagent MUST include
+the relevant `references/*.md` + `prompts/*.md` file paths from the
+"Read-These-First" table — the subagent starts with empty context and
+will not find them otherwise. See `prompts/_subagent_workflow.md` for the
+dispatch payload template.
+
+If you find yourself thinking "I'll just review my own draft to save a
+round-trip" — STOP. That is the failure mode the producer/reviewer split
+exists to prevent.
+
 ## Workflow shape (six derived stages)
 
 ```
@@ -108,6 +136,8 @@ artifact — do not silence the checker.
 | Excuse | Reality |
 |---|---|
 | "The chart looks fine; I'll skip the figure-reviewer subagent." | The reviewer enforces palette / column width / font / data-vs-claim alignment. Skipping it means a re-render later, possibly after the chart is in the paper draft. |
+| "I'll re-read prompts only at the start of the skill; that's enough." | Each stage has its own pre-reads. Mid-flow Read tool calls are not optional — your context drifts between stages and the prompt encodes the next stage's discipline. |
+| "I'll review my own draft to save a subagent round-trip." | Self-review is not review. Stage 4/5/6 reviewers MUST be dispatched as distinct subagents; the controller is not allowed to grade its own work. |
 | "I'll write the report first, then backfill claims." | claims.json is the source of truth the report quotes from. Writing the report first invites unsupported assertions that survive the review. |
 | "The English report is fine; I'll skip the Chinese version." | `check-release` reads `config.yaml`. If language is `bilingual`, the gate refuses your release. Change the config explicitly if a language really isn't needed. |
 | "I don't need to run lift-to-evidence; the agentsociety-generate-paper skill can re-type the claims." | Re-typing is judgment leakage between two skills. The bridge is deterministic; use it. |

@@ -16,13 +16,15 @@ and you want to:
 |---|---|---|
 | Drafting ≥3 sections | yes | no |
 | Drafting one tiny section, small fixes | no | yes |
-| Skeptical review of an already-drafted manuscript | yes | only if you must |
+| **Any skeptical review or revision decision** | **YES — REQUIRED** | **NO — self-review is not review** |
 | Single-paragraph revision after a `minor` finding | no (overkill) | yes |
 | Researcher wants audit trail per role | yes | no |
 | Cost is tightly bounded | no | yes |
 
-Direct mode is what `SKILL.md` describes as the default loop. This file
-adds the subagent-driven alternative; the controller picks per task.
+Direct mode is what `SKILL.md` describes for routine controller-driven
+tool calls; this file adds the subagent-driven alternative for the work
+that needs role separation. Skeptical-reviewer and revision-decider are
+never optional subagents.
 
 ## The Iron Law (workflow)
 

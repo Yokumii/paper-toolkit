@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
-import pytest
 
 from paper_toolkit.figures.layout import apply_axes_layout
 
@@ -13,9 +12,7 @@ def test_apply_axes_layout_rotates_and_wraps_tick_labels() -> None:
     try:
         ax.bar([0, 1], [1.0, 2.0])
         ax.set_xticks([0, 1])
-        ax.set_xticklabels(
-            ["Counter Attitudinal Exposure", "Pro Attitudinal Exposure"]
-        )
+        ax.set_xticklabels(["Counter Attitudinal Exposure", "Pro Attitudinal Exposure"])
 
         apply_axes_layout(
             ax,

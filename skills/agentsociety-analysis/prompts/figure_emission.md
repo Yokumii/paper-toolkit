@@ -17,12 +17,25 @@ spec JSON.
 
 ## What to do, per claim
 
-1. **Pick the honest chart kind** from `chart_qa.md`. If three kinds
+1. **Write the figure contract in working notes before touching JSON.**
+   Capture:
+   - core conclusion
+   - figure archetype: `quantitative grid`, `schematic-led composite`,
+     `image plate + quant`, or `asymmetric mixed-modality figure`
+   - hero evidence vs supporting evidence
+   - panel map if the figure is multi-panel
+   - statistics / source-data / image-integrity notes that a reviewer
+     will ask for
+
+   The figure is a visual argument, not a bag of plots. If a planned
+   panel does not defend the claim, remove it.
+
+2. **Pick the honest chart kind** from `chart_qa.md`. If three kinds
    would all work, the data is not shaped to support a sharp claim —
    sharpen the claim or restructure the data before authoring the
    spec.
 
-2. **Author the spec** at `paper/figure_specs/<figure_id>.json`. The
+3. **Author the spec** at `paper/figure_specs/<figure_id>.json`. The
    FigureSpec discriminator + per-kind required fields are in
    `paper_toolkit/models/figure_spec.py`. Minimum example:
 
@@ -55,10 +68,19 @@ spec JSON.
    the claim.
 
    Use the structured spec path for common single-chart and composite
-   figures. Use a script-backed figure when the claim needs a layout or
-   modality the built-in chart kinds cannot express.
+   figures, especially quantitative grids. Use a script-backed figure
+   when the claim needs a layout or modality the built-in chart kinds
+   cannot express: asymmetric hero-panel layouts, dedicated legend
+   panels, dark image plates, heatmaps, network-like matrices, radar /
+   polar summaries, or other mixed-modality figures that still defend
+   one claim.
 
-3. **Dispatch the figure-reviewer subagent — MANDATORY, BEFORE render.**
+   For multi-panel figures, rank the evidence visually. Prefer one hero
+   panel plus quieter supporting panels over a page of equal-sized
+   subplots. Reuse one coherent palette family across panels and prefer
+   direct labels or a shared legend when repeated legends waste space.
+
+4. **Dispatch the figure-reviewer subagent — MANDATORY, BEFORE render.**
    Use the dispatch payload shape from `prompts/_subagent_workflow.md`.
    The required-reads block in the dispatch prompt MUST list:
    - `skills/agentsociety-analysis/subagent_prompts/figure-reviewer.md`
@@ -71,26 +93,27 @@ spec JSON.
    Only render after the reviewer's verdict is `PASS`. Do NOT review
    the spec yourself "to save a round-trip" — that defeats the gate.
 
-4. `paper figure render --spec paper/figure_specs/<id>.json --workspace
-   .` → produces `paper/figures/<id>.pdf` + wrapper `.tex`.
+5. `paper figure render --spec paper/figure_specs/<id>.json --workspace
+   .` → produces `paper/figures/<id>.pdf`, `paper/figures/<id>.svg`,
+   and a wrapper `.tex`.
 
-5. **Dispatch the figure-reviewer subagent again, AFTER render.** The
+6. **Dispatch the figure-reviewer subagent again, AFTER render.** The
    second pass audits the PDF itself, not just the JSON: title clipping,
    tick-label overlap, y-axis truncation, legend sprawl, and whether the
    visible contrast still matches the claim.
 
-6. `paper figure register --spec paper/figure_specs/<id>.json
+7. `paper figure register --spec paper/figure_specs/<id>.json
    --workspace .` → inserts/updates `paper.json:artifacts.figures[]`.
 
-7. `paper analysis record-figure-contract --hypothesis-id H
+8. `paper analysis record-figure-contract --hypothesis-id H
    --experiment-id E --claim-id <id> --figure-id <fid>
    --rationale "<one sentence>" --workspace .` — binds claim ↔ spec.
 
-8. `paper check figure-qa --workspace .` — deterministic font / width
+9. `paper check figure-qa --workspace .` — deterministic font / width
    / embedding lint over every PDF. Each warning is an input; fix the
    spec and re-render.
 
-9. `paper analysis check-refine --hypothesis-id H --experiment-id E
+10. `paper analysis check-refine --hypothesis-id H --experiment-id E
    --workspace .` — passes only when every claim has contract + spec +
    PDF.
 

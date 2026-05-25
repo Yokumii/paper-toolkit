@@ -49,3 +49,16 @@ def test_analysis_prompts_explain_when_to_use_structured_vs_script_figures() -> 
         "use a script-backed figure when the claim needs a layout or modality the built-in chart kinds cannot express"
         in text
     )
+
+
+def test_figure_emission_requires_figure_contract_and_panel_hierarchy() -> None:
+    text = _read("prompts", "figure_emission.md")
+    assert "figure archetype" in text
+    assert "hero evidence vs supporting evidence" in text
+    assert "prefer one hero panel plus quieter supporting panels" in text
+
+
+def test_figure_contract_mentions_mixed_modality_and_editable_svg() -> None:
+    text = _read("references", "figure_contract.md")
+    assert "asymmetric mixed-modality figure" in text
+    assert "the svg is the editable companion" in text

@@ -54,6 +54,7 @@ def test_render_bar_writes_pdf_and_wrapper(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert result.pdf_path.stat().st_size > 1000
     assert result.tex_path.is_file()
     _assert_wrapper(result.tex_path.read_text(encoding="utf-8"), "fig_bar")
@@ -80,6 +81,7 @@ def test_render_line_with_series(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert result.pdf_path.stat().st_size > 1000
 
 
@@ -100,6 +102,7 @@ def test_render_scatter_basic(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
 
 
 def test_render_forest_writes_pdf(tmp_path: Path) -> None:
@@ -121,6 +124,7 @@ def test_render_forest_writes_pdf(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=tmp_path)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert result.tex_path.is_file()
     _assert_wrapper(result.tex_path.read_text(encoding="utf-8"), "fig_forest")
 
@@ -141,6 +145,7 @@ def test_render_loads_csv_data_relative_to_spec_dir(tmp_path: Path) -> None:
     result = render_figure(spec=spec, workspace=tmp_path, spec_dir=specs_dir)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
 
 
 def test_render_bar_with_wrapped_ticks_and_right_legend(tmp_path: Path) -> None:
@@ -176,6 +181,7 @@ def test_render_bar_with_wrapped_ticks_and_right_legend(tmp_path: Path) -> None:
             renderer_mod.apply_axes_layout = original
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert called["kwargs"]["tick_label_rotation"] == 30
     assert called["kwargs"]["tick_label_wrap"] == 12
     assert called["kwargs"]["legend_position"] == "right"
@@ -208,6 +214,7 @@ def test_render_line_tight_ylim_does_not_raise(tmp_path: Path) -> None:
             renderer_mod.apply_axes_layout = original
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert called["kwargs"]["ylim_mode"] == "tight"
 
 
@@ -255,4 +262,5 @@ def test_render_composite_figure_writes_pdf_and_wrapper(tmp_path: Path) -> None:
     result = render_figure(spec=composite, workspace=tmp_path, spec_dir=tmp_path)
 
     assert result.pdf_path.is_file()
+    assert result.svg_path.is_file()
     assert result.tex_path.is_file()

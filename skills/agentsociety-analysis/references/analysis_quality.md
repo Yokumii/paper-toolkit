@@ -35,6 +35,9 @@ the agent must.
 
 - The figure-reviewer subagent OPENED the PDF and confirmed claim ↔
   chart fit before the chart was bound via `record-figure-contract`.
+- The figure contract declares the archetype and, for multi-panel
+  figures, makes the hero evidence vs supporting evidence hierarchy
+  explicit.
 - A comparative claim's chart includes every compared arm / condition
   needed to see the verdict. A prose-only comparison attached to a
   single-arm chart does not pass.

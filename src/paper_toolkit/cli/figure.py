@@ -63,6 +63,7 @@ def _render_result_payload(result: RenderResult) -> dict[str, str]:
     return {
         "figure_id": result.figure_id,
         "pdf_path": str(result.pdf_path),
+        "svg_path": str(result.svg_path),
         "tex_path": str(result.tex_path),
     }
 

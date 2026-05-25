@@ -103,6 +103,7 @@ def test_render_happy_path_writes_pdf_and_wrapper(tmp_path: Path) -> None:
     assert payload["ok"] is True
     assert payload["result"]["figure_id"] == "fig1"
     assert Path(payload["result"]["pdf_path"]).is_file()
+    assert Path(payload["result"]["svg_path"]).is_file()
     assert Path(payload["result"]["tex_path"]).is_file()
 
 
@@ -178,3 +179,4 @@ if __name__ == "__main__":
     assert result.exit_code == 0, result.stdout
     payload = json.loads(result.stdout)
     assert payload["result"]["figure_id"] == "fig_script"
+    assert Path(payload["result"]["svg_path"]).is_file()

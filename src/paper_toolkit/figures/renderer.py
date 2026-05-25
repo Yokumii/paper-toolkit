@@ -39,6 +39,7 @@ _DOUBLE_IN = (7.2, 3.5)
 class RenderResult:
     figure_id: str
     pdf_path: Path
+    svg_path: Path
     tex_path: Path
 
 
@@ -124,7 +125,9 @@ def render_figure(*, spec: FigureSpec, workspace: Path, spec_dir: Path) -> Rende
         fig.tight_layout()
 
         pdf_path = (paths.figures_dir / f"{spec.id}.pdf").resolve()
+        svg_path = (paths.figures_dir / f"{spec.id}.svg").resolve()
         fig.savefig(pdf_path)
+        fig.savefig(svg_path)
     finally:
         plt.close(fig)
 
@@ -136,7 +139,12 @@ def render_figure(*, spec: FigureSpec, workspace: Path, spec_dir: Path) -> Rende
     )
     tex_path = (paths.figures_dir / f"{spec.id}.tex").resolve()
     write_atomic_text(tex_path, wrapper)
-    return RenderResult(figure_id=spec.id, pdf_path=pdf_path, tex_path=tex_path)
+    return RenderResult(
+        figure_id=spec.id,
+        pdf_path=pdf_path,
+        svg_path=svg_path,
+        tex_path=tex_path,
+    )
 
 
 def render_script_figure(
@@ -150,6 +158,7 @@ def render_script_figure(
         backend=spec.backend,
         workspace=workspace,
         figure_id=spec.id,
+        spec=spec,
     )
 
     wrapper = wrap_figure_tex(
@@ -160,4 +169,9 @@ def render_script_figure(
     )
     tex_path = (WorkspacePaths(workspace=workspace).figures_dir / f"{spec.id}.tex").resolve()
     write_atomic_text(tex_path, wrapper)
-    return RenderResult(figure_id=spec.id, pdf_path=result["pdf_path"].resolve(), tex_path=tex_path)
+    return RenderResult(
+        figure_id=spec.id,
+        pdf_path=result["pdf_path"].resolve(),
+        svg_path=result["svg_path"].resolve(),
+        tex_path=tex_path,
+    )

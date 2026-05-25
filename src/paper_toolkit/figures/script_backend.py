@@ -2,12 +2,20 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
+from paper_toolkit.models.figure_spec import ScriptFigureSpec
+
 
 def run_script_backend(
-    *, script_path: Path, backend: str, workspace: Path, figure_id: str
+    *,
+    script_path: Path,
+    backend: str,
+    workspace: Path,
+    figure_id: str,
+    spec: ScriptFigureSpec | None = None,
 ) -> dict[str, Path]:
     """Run a Python or R figure script and verify publication outputs exist."""
 
@@ -21,7 +29,15 @@ def run_script_backend(
     else:
         raise ValueError(f"unsupported script backend: {backend}")
 
-    subprocess.run(cmd, check=True)
+    env = os.environ.copy()
+    env["PAPER_FIGURE_ID"] = figure_id
+    env["PAPER_FIGURE_OUTPUT_DIR"] = str(out_dir)
+    if spec is not None:
+        env["PAPER_FIGURE_WIDTH"] = spec.width
+        env["PAPER_FIGURE_PALETTE"] = spec.palette
+        env["PAPER_FIGURE_CAPTION"] = spec.caption
+
+    subprocess.run(cmd, check=True, cwd=script_path.parent, env=env)
 
     pdf_path = out_dir / f"{figure_id}.pdf"
     svg_path = out_dir / f"{figure_id}.svg"

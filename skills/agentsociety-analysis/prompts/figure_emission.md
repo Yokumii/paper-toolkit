@@ -48,6 +48,12 @@ spec JSON.
    Inline `data` is fine for ≤50 rows; for larger data, point `data` at
    a CSV path (resolved spec-dir → workspace).
 
+   Comparative claims must put the compared arms / conditions in the
+   same chart. Do not downgrade a comparative claim into a
+   single-experiment summary panel plus a prose comparison. The spec may
+   combine rows from sibling experiments when the comparison itself is
+   the claim.
+
 3. **Dispatch the figure-reviewer subagent — MANDATORY, BEFORE render.**
    Use the dispatch payload shape from `prompts/_subagent_workflow.md`.
    The required-reads block in the dispatch prompt MUST list:
@@ -64,18 +70,23 @@ spec JSON.
 4. `paper figure render --spec paper/figure_specs/<id>.json --workspace
    .` → produces `paper/figures/<id>.pdf` + wrapper `.tex`.
 
-5. `paper figure register --spec paper/figure_specs/<id>.json
+5. **Dispatch the figure-reviewer subagent again, AFTER render.** The
+   second pass audits the PDF itself, not just the JSON: title clipping,
+   tick-label overlap, y-axis truncation, legend sprawl, and whether the
+   visible contrast still matches the claim.
+
+6. `paper figure register --spec paper/figure_specs/<id>.json
    --workspace .` → inserts/updates `paper.json:artifacts.figures[]`.
 
-6. `paper analysis record-figure-contract --hypothesis-id H
+7. `paper analysis record-figure-contract --hypothesis-id H
    --experiment-id E --claim-id <id> --figure-id <fid>
    --rationale "<one sentence>" --workspace .` — binds claim ↔ spec.
 
-7. `paper check figure-qa --workspace .` — deterministic font / width
+8. `paper check figure-qa --workspace .` — deterministic font / width
    / embedding lint over every PDF. Each warning is an input; fix the
    spec and re-render.
 
-8. `paper analysis check-refine --hypothesis-id H --experiment-id E
+9. `paper analysis check-refine --hypothesis-id H --experiment-id E
    --workspace .` — passes only when every claim has contract + spec +
    PDF.
 
@@ -84,6 +95,8 @@ spec JSON.
 - Authoring a matplotlib script instead of a spec. The renderer is the
   audit surface.
 - Picking `line` for a comparison between two arms (use `bar`).
+- Letting a `comparative` claim point at a chart that omits one side of
+  the comparison.
 - Encoding the load-bearing contrast in color (use position).
 - Skipping the figure-reviewer subagent because "the spec looks fine."
 

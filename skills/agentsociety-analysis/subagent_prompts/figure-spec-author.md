@@ -28,6 +28,10 @@ subagent must clear the spec first.
 2. Pick the chart kind using `chart_qa.md`'s chooser. If two kinds
    would both work, prefer the one with the stronger encoding (see the
    ladder).
+   For comparative claims, shape the data so both sides of the
+   comparison are visible in the same chart. Pull rows from sibling
+   experiments when needed; do not emit a single-experiment summary and
+   leave the comparison to the caption.
 3. Choose the palette honestly. Default `nmi_pastel`. Use
    `nature_clinical` only when there is a literal treatment-vs-control
    semantic. Never invent a fifth palette.

@@ -120,7 +120,11 @@ artifact — do not silence the checker.
    `references/figure_publication_contract.md` for the audit.
 3. **One chart per claim, one claim per chart.** A claim with no
    `figure_contract` is incomplete (the Refine stage checker catches it).
-   A chart not bound to a claim is decoration; drop it.
+   A chart not bound to a claim is decoration; drop it. The unit of
+   figure design is the claim, not the local experiment folder: a
+   comparative claim may and often should pull rows from sibling
+   experiments so the compared arms / conditions are visible on the same
+   axes.
 4. **The toolkit owns `analysis/<H>/<E>/` and `paper/figure_specs/`.**
    Treat materials outside those as read-only input.
 5. **Bilingual matters when the workspace says so.** `check-release`
@@ -135,7 +139,7 @@ artifact — do not silence the checker.
 
 | Excuse | Reality |
 |---|---|
-| "The chart looks fine; I'll skip the figure-reviewer subagent." | The reviewer enforces palette / column width / font / data-vs-claim alignment. Skipping it means a re-render later, possibly after the chart is in the paper draft. |
+| "The chart looks fine; I'll skip the figure-reviewer subagent." | The reviewer enforces palette / column width / font / data-vs-claim alignment, then re-checks the rendered PDF for clipping / overlap / misleading axes. Skipping it means a re-render later, possibly after the chart is in the paper draft. |
 | "I'll re-read prompts only at the start of the skill; that's enough." | Each stage has its own pre-reads. Mid-flow Read tool calls are not optional — your context drifts between stages and the prompt encodes the next stage's discipline. |
 | "I'll review my own draft to save a subagent round-trip." | Self-review is not review. Stage 4/5/6 reviewers MUST be dispatched as distinct subagents; the controller is not allowed to grade its own work. |
 | "I'll write the report first, then backfill claims." | claims.json is the source of truth the report quotes from. Writing the report first invites unsupported assertions that survive the review. |
